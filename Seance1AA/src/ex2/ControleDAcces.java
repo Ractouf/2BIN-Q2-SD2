@@ -1,27 +1,38 @@
 package ex2;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class ControleDAcces {
-	
-	public ControleDAcces(){
-		
+	HashSet<Employe> employesPresents;
+	HashMap<Badge, Employe> employes;
+
+	public ControleDAcces() {
+		employesPresents = new HashSet<>();
+		employes = new HashMap<>();
 	}
 	
-	// associe le badge à un employé
-	public void donnerBadge (Badge b, Employe e){
+	// associe le badge ï¿½ un employï¿½
+	public void donnerBadge (Badge b, Employe e) {
+		if (employes.containsValue(e))
+			throw new IllegalArgumentException("EmployÃ© possÃ¨de dÃ©jÃ  un badge");
+
+		employes.put(b, e);
 	}
 	
-	// met à jour les employés présents dans le batiment
-	public void entrerBatiment (Badge b){
+	// met ï¿½ jour les employï¿½s prï¿½sents dans le batiment
+	public void entrerBatiment (Badge b) {
+		employesPresents.add(employes.get(b));
 	}
 
-	// met à jour les employés présents dans le batiment
-	public void sortirBatiment (Badge b){
-
+	// met ï¿½ jour les employï¿½s prï¿½sents dans le batiment
+	public void sortirBatiment (Badge b) {
+		employesPresents.remove(employes.get(b));
 	}
 	
-	// renvoie vrai si l'employé est dans le batiment, faux sinon
-	public boolean estDansBatiment (Employe e){
-		return false;
+	// renvoie vrai si l'employï¿½ est dans le batiment, faux sinon
+	public boolean estDansBatiment (Employe e) {
+		return employesPresents.contains(e);
 	}
 
 }

@@ -9,7 +9,7 @@ public class GestionImpression {
 	}
 	
 	public Impression selectionnerImpression(){
-
+		return null;
 	}
 
 
