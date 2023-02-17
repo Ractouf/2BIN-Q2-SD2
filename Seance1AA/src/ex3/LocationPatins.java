@@ -1,26 +1,29 @@
 package ex3;
 
 import java.time.LocalTime;
+import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.NoSuchElementException;
 
 import static java.time.temporal.ChronoUnit.MILLIS;
 
 public class LocationPatins {
-	HashMap<Integer, Set<Integer>> pointures;
-	HashMap<Integer, LocalTime> casiersOccupes;
+	private HashMap<Integer, ArrayDeque<Integer>> pointures;
+	private HashMap<Integer, LocalTime> casiersOccupes;
+	private int[] casiersBase;
 	public LocationPatins(int[] casiers) {
-		for (int casier : casiers) {
-			if (casier < 33 || casier > 48)
-				continue;
-			if (pointures.containsKey(casier))
-				continue;
-
-			pointures.put(casier, new HashSet<>());
-		}
-
+		pointures = new HashMap<>();
 		casiersOccupes = new HashMap<>();
+		casiersBase = casiers;
+
+		for (int i = 0; i < casiers.length; i++) {
+			if (casiers[i] < 33 || casiers[i] > 48)
+				continue;
+			if (!pointures.containsKey(casiers[i]))
+				pointures.put(casiers[i], new ArrayDeque<>());
+
+			pointures.get(casiers[i]).add(i);
+		}
 	}
 
 	// date1 < date2
@@ -32,15 +35,29 @@ public class LocationPatins {
 	public int attribuerCasierAvecPatins(int pointure) {
 		if (pointure < 33 || pointure > 48)
 			throw new IllegalArgumentException();
-		LocalTime l = LocalTime.now();
-		
-		
-		return 0;
 
+		int casier = 0;
+
+		try {
+			casier = pointures.get(pointure).removeFirst();
+		} catch (NoSuchElementException e) {
+			return -1;
+		}
+
+		LocalTime l = LocalTime.now();
+
+		casiersOccupes.put(casier, l);
+		return casier;
 	}
 
 	public double libererCasier(int numeroCasier) {
-		return 0;
-	}
+		if (!casiersOccupes.containsKey(numeroCasier))
+			return -1;
 
+		pointures.get(casiersBase[numeroCasier]).add(numeroCasier);
+		double prix = prix(casiersOccupes.get(numeroCasier), LocalTime.now());
+		casiersOccupes.remove(numeroCasier);
+
+		return prix;
+	}
 }
