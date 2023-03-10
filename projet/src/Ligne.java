@@ -3,17 +3,17 @@ import java.util.Objects;
 public class Ligne {
     private final int id;
     private final String numero;
-    private final String source;
-    private final String destination;
+    private final Station source;
+    private final Station destination;
     private final String type;
     private final int tempsMoyen;
 
-    public Ligne(int id, String numero, String depart, String destintination, String typeTransport, int tempsMoyen) {
+    public Ligne(int id, String numero, Station source, Station destination, String type, int tempsMoyen) {
         this.id = id;
         this.numero = numero;
-        this.source = depart;
-        this.destination = destintination;
-        this.type = typeTransport;
+        this.source = source;
+        this.destination = destination;
+        this.type = type;
         this.tempsMoyen = tempsMoyen;
     }
 
@@ -23,10 +23,10 @@ public class Ligne {
     public String getNumero() {
         return numero;
     }
-    public String getSource() {
+    public Station getSource() {
         return source;
     }
-    public String getDestination() {
+    public Station getDestination() {
         return destination;
     }
     public String getType() {

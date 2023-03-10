@@ -23,8 +23,8 @@ public class Graph {
                 ligne = new Ligne(
                         Integer.parseInt(tabCurrentLine[0]),
                         tabCurrentLine[1],
-                        tabCurrentLine[2],
-                        tabCurrentLine[3],
+                        new Station(tabCurrentLine[2]),
+                        new Station(tabCurrentLine[3]),
                         tabCurrentLine[4],
                         Integer.parseInt(tabCurrentLine[5])
                 );
