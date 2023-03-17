@@ -1,13 +1,10 @@
 import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Graph {
     protected HashMap<Integer, Ligne> lignes;
 
-    protected Map<String, Set<Troncon>> adjacence;
+    protected Map<Station, Set<Troncon>> adjacence;
 
     public Graph(File l, File t) {
         Ligne ligne;
@@ -40,12 +37,11 @@ public class Graph {
             while ((currentLine = bf.readLine()) != null) {
                 tabCurrentLine = currentLine.split(",");
                 troncon = new Troncon(
-                        tabCurrentLine[1],
-                        tabCurrentLine[2],
+                        new Station(tabCurrentLine[1]),
+                        new Station(tabCurrentLine[2]),
                         Integer.parseInt(tabCurrentLine[3]),
                         lignes.get(Integer.parseInt(tabCurrentLine[0]))
                 );
-
                 if (adjacence.get(troncon.getDepart()) == null) {
                     adjacence.put(troncon.getDepart(), new HashSet<>());
                 }
@@ -57,6 +53,51 @@ public class Graph {
     }
 
     public void calculerCheminMinimisantNombreTroncons(String depart, String arrivee) {
+        Set<Station> visited = new HashSet<>();
+        ArrayDeque<Station> queue = new ArrayDeque<>();
+        HashMap<Station, Station> chemin = new HashMap<>();
+
+        Station stationDepart = new Station(depart);
+        Station stationArrivee = new Station(arrivee);
+
+        Station currentStation = stationDepart;
+
+        queue.add(stationDepart);
+        visited.add(stationDepart);
+
+        boolean found = false;
+        while(!found) {
+            currentStation = queue.removeFirst();
+
+            Set<Troncon> troncons = adjacence.get(currentStation);
+
+            for (Troncon troncon : troncons) {
+                Station departTroncon = troncon.getDepart();
+                Station arriveeTroncon = troncon.getArrivee();
+
+                if (!visited.contains(arriveeTroncon)) {
+                    visited.add(arriveeTroncon);
+
+                    queue.add(arriveeTroncon);
+                    chemin.put(arriveeTroncon, departTroncon);
+                }
+
+                if (arriveeTroncon.equals(stationArrivee)) {
+                    found = true;
+                }
+            }
+        }
+
+        ArrayDeque<Station> cheminFinal = new ArrayDeque<>();
+        cheminFinal.addFirst(stationArrivee);
+
+        while (!cheminFinal.getFirst().equals(stationDepart)) {
+            cheminFinal.addFirst(chemin.get(cheminFinal.getFirst()));
+        }
+
+        for (Station station : cheminFinal) {
+            System.out.println(station.getNom());
+        }
     }
 
     public void calculerCheminMinimisantTempsTransport(String depart, String arrivee) {
