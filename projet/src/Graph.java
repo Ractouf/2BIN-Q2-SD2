@@ -133,34 +133,36 @@ public class Graph {
     }
 
     private void afficherCheminFinal(HashMap<Station, Troncon> chemin, Station depart, Station arrivee) {
+        ArrayDeque<Deplacement> cheminFinal = new ArrayDeque<>();
+        Troncon tronconDepart = chemin.get(arrivee);
+        cheminFinal.addFirst(new Deplacement(tronconDepart.getLigne(), tronconDepart.getDepart(), tronconDepart.getArrivee(), tronconDepart.getDuree()));
+
+        Ligne ligneActuelle = tronconDepart.getLigne();
+        while (!cheminFinal.getFirst().getDepart().equals(depart)) {
+            Troncon tronconActuel = chemin.get(cheminFinal.getFirst().getDepart());
+
+            if (!ligneActuelle.equals(tronconActuel.getLigne())) {
+                cheminFinal.addFirst(new Deplacement(tronconActuel.getLigne(), tronconActuel.getDepart(), tronconActuel.getArrivee(), tronconActuel.getDuree()));
+                ligneActuelle = tronconActuel.getLigne();
+            } else {
+                Deplacement deplacement = cheminFinal.getFirst();
+                deplacement.setDepart(tronconActuel.getDepart());
+                deplacement.setDuree(deplacement.getDuree() + tronconActuel.getDuree());
+                deplacement.incrementNbTroncons();
+            }
+        }
+
+        int nbTroncons = 0;
         int dureeTransport = 0;
         int dureeTotale = 0;
-        Ligne currentLigne;
+        for (Deplacement deplacement : cheminFinal) {
+            System.out.println(deplacement);
 
-        ArrayDeque<Troncon> cheminFinal = new ArrayDeque<>();
-        cheminFinal.addFirst(chemin.get(arrivee));
-        dureeTransport += cheminFinal.getFirst().getDuree();
-
-        currentLigne = cheminFinal.getFirst().getLigne();
-        dureeTotale += currentLigne.getTempsMoyen();
-
-        while (!cheminFinal.getFirst().getDepart().equals(depart)) {
-            cheminFinal.addFirst(chemin.get(cheminFinal.getFirst().getDepart()));
-
-            if (!cheminFinal.getFirst().getLigne().equals(currentLigne)) {
-                currentLigne = cheminFinal.getFirst().getLigne();
-                dureeTotale += currentLigne.getTempsMoyen();
-            }
-
-            dureeTransport += cheminFinal.getFirst().getDuree();
+            nbTroncons += deplacement.getNbTroncons();
+            dureeTransport += deplacement.getDuree();
+            dureeTotale += deplacement.getLigne().getTempsMoyen() + dureeTransport;
         }
-
-        dureeTotale += dureeTransport;
-
-        for (Troncon troncon : cheminFinal) {
-            System.out.println(troncon);
-        }
-        System.out.println("nbTroncons=" + cheminFinal.size());
+        System.out.println("nbTroncons=" + nbTroncons);
         System.out.println("dureeTransport=" + dureeTransport + " dureeTotale=" + dureeTotale);
     }
 }
