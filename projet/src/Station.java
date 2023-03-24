@@ -2,6 +2,7 @@ import java.util.Objects;
 
 public class Station {
     private final String nom;
+    private int tempsEtiquetteProvisoire;
 
     public Station(String nom) {
         this.nom = nom;
@@ -9,6 +10,14 @@ public class Station {
 
     public String getNom() {
         return nom;
+    }
+
+    public int getTempsEtiquetteProvisoire() {
+        return tempsEtiquetteProvisoire;
+    }
+
+    public void setTempsEtiquetteProvisoire(int tempsEtiquetteProvisoire) {
+        this.tempsEtiquetteProvisoire = tempsEtiquetteProvisoire;
     }
 
     @Override

@@ -99,7 +99,6 @@ public class Graph {
         currentLigne = cheminFinal.getFirst().getLigne();
         dureeTotale += currentLigne.getTempsMoyen();
 
-
         while (!cheminFinal.getFirst().getDepart().equals(stationDepart)) {
             cheminFinal.addFirst(chemin.get(cheminFinal.getFirst().getDepart()));
 
@@ -121,6 +120,72 @@ public class Graph {
     }
 
     public void calculerCheminMinimisantTempsTransport(String depart, String arrivee) {
+        TreeSet<Station> provisoires = new TreeSet<>(Comparator.comparingInt(Station::getTempsEtiquetteProvisoire).thenComparing(Station::getNom));
+        Set<Station> definitif = new HashSet<>();
+        HashMap<Station, Troncon> chemin = new HashMap<>();
 
+        Station stationDepart = new Station(depart);
+        Station stationFinale = new Station(arrivee);
+
+        stationDepart.setTempsEtiquetteProvisoire(0);
+        provisoires.add(stationDepart);
+        Station stationCourrante = stationDepart;
+
+        while(!provisoires.isEmpty()) {
+            stationCourrante = provisoires.pollFirst();
+            definitif.add(stationCourrante);
+
+            if (stationCourrante.equals(stationFinale))
+                break;
+
+            for (Troncon troncon : adjacence.get(stationCourrante)) {
+                if (!definitif.contains(troncon.getArrivee())) {
+                    int tempsProvisoire = stationCourrante.getTempsEtiquetteProvisoire() + troncon.getDuree();
+                    if(provisoires.contains(troncon.getArrivee())) {
+                        if(troncon.getArrivee().getTempsEtiquetteProvisoire() > tempsProvisoire) {
+                            provisoires.remove(troncon.getArrivee());
+                            troncon.getArrivee().setTempsEtiquetteProvisoire(tempsProvisoire);
+                            provisoires.add(troncon.getArrivee());
+                            chemin.put(troncon.getArrivee(), troncon);
+                        }
+                    } else {
+                        troncon.getArrivee().setTempsEtiquetteProvisoire(tempsProvisoire);
+                        provisoires.add(troncon.getArrivee());
+                        chemin.put(troncon.getArrivee(), troncon);
+                    }
+                }
+            }
+
+        }
+
+        int dureeTransport = 0;
+        int dureeTotale = 0;
+        Ligne currentLigne;
+
+        ArrayDeque<Troncon> cheminFinal = new ArrayDeque<>();
+        cheminFinal.addFirst(chemin.get(stationFinale));
+        dureeTransport += cheminFinal.getFirst().getDuree();
+
+        currentLigne = cheminFinal.getFirst().getLigne();
+        dureeTotale += currentLigne.getTempsMoyen();
+
+        while (!cheminFinal.getFirst().getDepart().equals(stationDepart)) {
+            cheminFinal.addFirst(chemin.get(cheminFinal.getFirst().getDepart()));
+
+            if (!cheminFinal.getFirst().getLigne().equals(currentLigne)) {
+                currentLigne = cheminFinal.getFirst().getLigne();
+                dureeTotale += currentLigne.getTempsMoyen();
+            }
+
+            dureeTransport += cheminFinal.getFirst().getDuree();
+        }
+
+        dureeTotale += dureeTransport;
+
+        for (Troncon troncon : cheminFinal) {
+            System.out.println(troncon);
+        }
+        System.out.println("nbTroncons=" + cheminFinal.size());
+        System.out.println("dureeTransport=" + dureeTransport + " dureeTotale=" + dureeTotale);
     }
 }
