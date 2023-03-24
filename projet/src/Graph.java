@@ -106,6 +106,10 @@ public class Graph {
 
                 if (!definitifs.contains(arriveeTroncon)) {
                     int tempsProvisoire = stationActuelle.getTempsEtiquetteProvisoire() + troncon.getDuree();
+
+                    if (chemin.get(stationActuelle) != null && !chemin.get(stationActuelle).getLigne().equals(troncon.getLigne()))
+                        tempsProvisoire += troncon.getLigne().getTempsMoyen();
+
                     if (provisoires.contains(arriveeTroncon)) {
                         if (arriveeTroncon.getTempsEtiquetteProvisoire() > tempsProvisoire) {
                             provisoires.remove(arriveeTroncon);
