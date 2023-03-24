@@ -2,50 +2,48 @@ import java.io.*;
 import java.util.*;
 
 public class Graph {
-    protected HashMap<Integer, Ligne> lignes;
-
-    protected Map<Station, Set<Troncon>> adjacence;
+    Set<Station> stations = new HashSet<>();
+    protected Map<Integer, Ligne> lignes;
+    protected Map<Station, Set<Troncon>> adjacences;
 
     public Graph(File l, File t) {
-        Ligne ligne;
-        Troncon troncon;
-        String currentLine;
-        String[] tabCurrentLine;
+        String ligneActuelle;
+        String[] tabLigneActuelle;
 
         try (BufferedReader bf = new BufferedReader(new FileReader(l)) ) {
             lignes = new HashMap<>();
 
-            while ((currentLine = bf.readLine()) != null) {
-                tabCurrentLine = currentLine.split(",");
-                ligne = new Ligne(
-                        Integer.parseInt(tabCurrentLine[0]),
-                        tabCurrentLine[1],
-                        new Station(tabCurrentLine[2]),
-                        new Station(tabCurrentLine[3]),
-                        tabCurrentLine[4],
-                        Integer.parseInt(tabCurrentLine[5])
+            while ((ligneActuelle = bf.readLine()) != null) {
+                tabLigneActuelle = ligneActuelle.split(",");
+                Ligne ligne = new Ligne(
+                        Integer.parseInt(tabLigneActuelle[0]),
+                        tabLigneActuelle[1],
+                        obtenirStationAvecNom(tabLigneActuelle[2]),
+                        obtenirStationAvecNom(tabLigneActuelle[3]),
+                        tabLigneActuelle[4],
+                        Integer.parseInt(tabLigneActuelle[5])
                 );
-                lignes.put(Integer.parseInt(tabCurrentLine[0]), ligne);
+                lignes.put(Integer.parseInt(tabLigneActuelle[0]), ligne);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         try (BufferedReader bf = new BufferedReader(new FileReader(t)) ) {
-            adjacence = new HashMap<>();
+            adjacences = new HashMap<>();
 
-            while ((currentLine = bf.readLine()) != null) {
-                tabCurrentLine = currentLine.split(",");
-                troncon = new Troncon(
-                        new Station(tabCurrentLine[1]),
-                        new Station(tabCurrentLine[2]),
-                        Integer.parseInt(tabCurrentLine[3]),
-                        lignes.get(Integer.parseInt(tabCurrentLine[0]))
+            while ((ligneActuelle = bf.readLine()) != null) {
+                tabLigneActuelle = ligneActuelle.split(",");
+                Troncon troncon = new Troncon(
+                        obtenirStationAvecNom(tabLigneActuelle[1]),
+                        obtenirStationAvecNom(tabLigneActuelle[2]),
+                        Integer.parseInt(tabLigneActuelle[3]),
+                        lignes.get(Integer.parseInt(tabLigneActuelle[0]))
                 );
-                if (adjacence.get(troncon.getDepart()) == null) {
-                    adjacence.put(troncon.getDepart(), new HashSet<>());
+                if (adjacences.get(troncon.getDepart()) == null) {
+                    adjacences.put(troncon.getDepart(), new HashSet<>());
                 }
-                adjacence.get(troncon.getDepart()).add(troncon);
+                adjacences.get(troncon.getDepart()).add(troncon);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -53,26 +51,21 @@ public class Graph {
     }
 
     public void calculerCheminMinimisantNombreTroncons(String depart, String arrivee) {
-        Station stationDepart = new Station(depart);
-        Station stationArrivee = new Station(arrivee);
-
         Set<Station> visite = new HashSet<>();
-        ArrayDeque<Station> queue = new ArrayDeque<>();
+        Deque<Station> queue = new ArrayDeque<>();
         HashMap<Station, Troncon> chemin = new HashMap<>();
 
-        Station currentStation = stationDepart;
+        Station stationDepart = obtenirStationAvecNom(depart);
+        Station stationArrivee = obtenirStationAvecNom(arrivee);
 
         queue.add(stationDepart);
         visite.add(stationDepart);
 
-        boolean found = false;
-        while(!found) {
-            currentStation = queue.removeFirst();
+        boolean trouve = false;
+        while(!trouve) {
+            Station stationActuelle = queue.removeFirst();
 
-            Set<Troncon> troncons = adjacence.get(currentStation);
-
-            for (Troncon troncon : troncons) {
-                Station departTroncon = troncon.getDepart();
+            for (Troncon troncon : adjacences.get(stationActuelle)) {
                 Station arriveeTroncon = troncon.getArrivee();
 
                 if (!visite.contains(arriveeTroncon)) {
@@ -83,93 +76,79 @@ public class Graph {
                 }
 
                 if (arriveeTroncon.equals(stationArrivee)) {
-                    found = true;
+                    trouve = true;
                 }
             }
         }
-
-        int dureeTransport = 0;
-        int dureeTotale = 0;
-        Ligne currentLigne;
-
-        ArrayDeque<Troncon> cheminFinal = new ArrayDeque<>();
-        cheminFinal.addFirst(chemin.get(stationArrivee));
-        dureeTransport += cheminFinal.getFirst().getDuree();
-
-        currentLigne = cheminFinal.getFirst().getLigne();
-        dureeTotale += currentLigne.getTempsMoyen();
-
-        while (!cheminFinal.getFirst().getDepart().equals(stationDepart)) {
-            cheminFinal.addFirst(chemin.get(cheminFinal.getFirst().getDepart()));
-
-            if (!cheminFinal.getFirst().getLigne().equals(currentLigne)) {
-                currentLigne = cheminFinal.getFirst().getLigne();
-                dureeTotale += currentLigne.getTempsMoyen();
-            }
-
-            dureeTransport += cheminFinal.getFirst().getDuree();
-        }
-
-        dureeTotale += dureeTransport;
-
-        for (Troncon troncon : cheminFinal) {
-            System.out.println(troncon);
-        }
-        System.out.println("nbTroncons=" + cheminFinal.size());
-        System.out.println("dureeTransport=" + dureeTransport + " dureeTotale=" + dureeTotale);
+        afficherCheminFinal(chemin, stationDepart, stationArrivee);
     }
 
     public void calculerCheminMinimisantTempsTransport(String depart, String arrivee) {
         TreeSet<Station> provisoires = new TreeSet<>(Comparator.comparingInt(Station::getTempsEtiquetteProvisoire).thenComparing(Station::getNom));
-        Set<Station> definitif = new HashSet<>();
+        Set<Station> definitifs = new HashSet<>();
         HashMap<Station, Troncon> chemin = new HashMap<>();
 
-        Station stationDepart = new Station(depart);
-        Station stationFinale = new Station(arrivee);
+        Station stationDepart = obtenirStationAvecNom(depart);
+        Station stationArrivee = obtenirStationAvecNom(arrivee);
 
         stationDepart.setTempsEtiquetteProvisoire(0);
         provisoires.add(stationDepart);
-        Station stationCourrante = stationDepart;
 
         while(!provisoires.isEmpty()) {
-            stationCourrante = provisoires.pollFirst();
-            definitif.add(stationCourrante);
+            Station stationActuelle = provisoires.pollFirst();
+            definitifs.add(stationActuelle);
 
-            if (stationCourrante.equals(stationFinale))
+            if (stationActuelle.equals(stationArrivee))
                 break;
 
-            for (Troncon troncon : adjacence.get(stationCourrante)) {
-                if (!definitif.contains(troncon.getArrivee())) {
-                    int tempsProvisoire = stationCourrante.getTempsEtiquetteProvisoire() + troncon.getDuree();
-                    if(provisoires.contains(troncon.getArrivee())) {
-                        if(troncon.getArrivee().getTempsEtiquetteProvisoire() > tempsProvisoire) {
-                            provisoires.remove(troncon.getArrivee());
-                            troncon.getArrivee().setTempsEtiquetteProvisoire(tempsProvisoire);
-                            provisoires.add(troncon.getArrivee());
-                            chemin.put(troncon.getArrivee(), troncon);
+            for (Troncon troncon : adjacences.get(stationActuelle)) {
+                Station arriveeTroncon = troncon.getArrivee();
+
+                if (!definitifs.contains(arriveeTroncon)) {
+                    int tempsProvisoire = stationActuelle.getTempsEtiquetteProvisoire() + troncon.getDuree();
+                    if (provisoires.contains(arriveeTroncon)) {
+                        if (arriveeTroncon.getTempsEtiquetteProvisoire() > tempsProvisoire) {
+                            provisoires.remove(arriveeTroncon);
+                            arriveeTroncon.setTempsEtiquetteProvisoire(tempsProvisoire);
+                            provisoires.add(arriveeTroncon);
+                            chemin.put(arriveeTroncon, troncon);
                         }
                     } else {
-                        troncon.getArrivee().setTempsEtiquetteProvisoire(tempsProvisoire);
-                        provisoires.add(troncon.getArrivee());
-                        chemin.put(troncon.getArrivee(), troncon);
+                        arriveeTroncon.setTempsEtiquetteProvisoire(tempsProvisoire);
+                        provisoires.add(arriveeTroncon);
+                        chemin.put(arriveeTroncon, troncon);
                     }
                 }
             }
-
         }
+        afficherCheminFinal(chemin, stationDepart, stationArrivee);
+    }
 
+    private Station obtenirStationAvecNom(String stationName) {
+        Station station = new Station(stationName);
+        if (stations.contains(station)) {
+            for (Station stationSet : stations) {
+                if (stationSet.equals(station))
+                    return stationSet;
+            }
+        }
+        stations.add(station);
+        return station;
+    }
+
+    private void afficherCheminFinal(HashMap<Station, Troncon> chemin, Station depart, Station arrivee) {
         int dureeTransport = 0;
         int dureeTotale = 0;
         Ligne currentLigne;
 
         ArrayDeque<Troncon> cheminFinal = new ArrayDeque<>();
-        cheminFinal.addFirst(chemin.get(stationFinale));
+        cheminFinal.addFirst(chemin.get(arrivee));
         dureeTransport += cheminFinal.getFirst().getDuree();
 
         currentLigne = cheminFinal.getFirst().getLigne();
         dureeTotale += currentLigne.getTempsMoyen();
 
-        while (!cheminFinal.getFirst().getDepart().equals(stationDepart)) {
+        while (!cheminFinal.getFirst().getDepart().equals(depart)) {
             cheminFinal.addFirst(chemin.get(cheminFinal.getFirst().getDepart()));
 
             if (!cheminFinal.getFirst().getLigne().equals(currentLigne)) {
