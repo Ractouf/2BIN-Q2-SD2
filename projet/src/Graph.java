@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 public class Graph {
-    Set<Station> stations = new HashSet<>();
+    Map<String, Station> stations = new HashMap();
     protected Map<Integer, Ligne> lignes;
     protected Map<Station, Set<Troncon>> adjacences;
 
@@ -107,9 +107,6 @@ public class Graph {
                 if (!definitifs.contains(arriveeTroncon)) {
                     int tempsProvisoire = stationActuelle.getTempsEtiquetteProvisoire() + troncon.getDuree();
 
-                    if (chemin.get(stationActuelle) != null && !chemin.get(stationActuelle).getLigne().equals(troncon.getLigne()))
-                        tempsProvisoire += troncon.getLigne().getTempsMoyen();
-
                     if (provisoires.contains(arriveeTroncon)) {
                         if (arriveeTroncon.getTempsEtiquetteProvisoire() > tempsProvisoire) {
                             provisoires.remove(arriveeTroncon);
@@ -129,15 +126,10 @@ public class Graph {
     }
 
     private Station obtenirStationAvecNom(String stationName) {
-        Station station = new Station(stationName);
-        if (stations.contains(station)) {
-            for (Station stationSet : stations) {
-                if (stationSet.equals(station))
-                    return stationSet;
-            }
+        if (stations.get(stationName) == null) {
+            stations.put(stationName, new Station(stationName));
         }
-        stations.add(station);
-        return station;
+        return stations.get(stationName);
     }
 
     private void afficherCheminFinal(HashMap<Station, Troncon> chemin, Station depart, Station arrivee) {
