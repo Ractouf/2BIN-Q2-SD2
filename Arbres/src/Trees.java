@@ -67,7 +67,7 @@ public class Trees {
 			min = t.getValue();
 
 		for (Tree child : t)
-			min(child, min);
+			min = min(child, min);
 
 		return min;
 	}
