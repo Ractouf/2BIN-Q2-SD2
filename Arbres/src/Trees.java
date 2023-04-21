@@ -58,6 +58,15 @@ public class Trees {
 	}
 
 	// 1.2)
+	/*public static int min(Tree t) {
+		int min = t.getValue();
+
+		for (Tree child : t) {
+			min = Math.min(min(child), min);
+		}
+		return min;
+	}*/
+
 	public static int min(Tree t) {
 		return min(t, t.getValue());
 	}
@@ -74,22 +83,51 @@ public class Trees {
 
 	// 1.3)
 	public static int sum(Tree t) {
-		return 42;
+		int sum = t.getValue();
+
+		for (Tree child : t) {
+			sum += sum(child);
+		}
+
+		return sum;
 	}
 
 	// 1.4)
 	public static boolean equals(Tree t1, Tree t2) {
-		return false;
+		if (t1.getValue() != t2.getValue())
+			return false;
+
+		for (int i = 0; i < t1.nbrChildren(); i++) {
+			if (!equals(t1.getChildren()[i], t2.getChildren()[i])) return false;
+		}
+
+		return true;
 	}
 
 	// 1.5)
 	public static int depth(Tree n) {
-		return 42;
+		if (n.getParent() != null) {
+			return depth(n.getParent()) + 1;
+		}
+		return 0;
 	}
 
 	// 1.6)
 	public static boolean sameOne(Tree n1, Tree n2) {
-		return true;
+		int depth1 = depth(n1);
+		int depth2 = depth(n2);
+
+		Tree parent1 = n1;
+		Tree parent2 = n2;
+
+		if (depth1 != depth2) return false;
+
+		for (int i = 0; i < depth1; i++) {
+			parent1 = n1.getParent();
+			parent2 = n2.getParent();
+		}
+
+		return parent1 == parent2;
 	}
 
 	// 1.7)
