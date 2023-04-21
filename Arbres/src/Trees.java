@@ -114,20 +114,7 @@ public class Trees {
 
 	// 1.6)
 	public static boolean sameOne(Tree n1, Tree n2) {
-		int depth1 = depth(n1);
-		int depth2 = depth(n2);
-
-		Tree parent1 = n1;
-		Tree parent2 = n2;
-
-		if (depth1 != depth2) return false;
-
-		for (int i = 0; i < depth1; i++) {
-			parent1 = n1.getParent();
-			parent2 = n2.getParent();
-		}
-
-		return parent1 == parent2;
+		return false;
 	}
 
 	// 1.7)

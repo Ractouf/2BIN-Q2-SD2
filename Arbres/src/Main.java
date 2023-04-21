@@ -54,7 +54,7 @@ public class Main {
     System.out.println(Trees.depth(l7));
 
     System.out.println("1.6");
-    System.out.println("l7 == l7 " + Trees.sameOne(l7, l7));
-    System.out.println("l7 == l7_2 " + Trees.sameOne(l7, l7_2));
+    System.out.println("l7 == l7 " + Trees.sameOne(l7, t2));
+    System.out.println("l7 == l7_2 " + Trees.sameOne(l7, t2_2));
   }
 }
