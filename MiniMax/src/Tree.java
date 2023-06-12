@@ -30,26 +30,42 @@ public class Tree {
   // Renvoie la valeur Minimax du joueur bleu en fonction des valeurs Minimax de
   // ses fils.
   private static Triplet minBlue(Triplet leftRes, Triplet rightRes) {
-     if (leftRes.getMinBlue() > rightRes.getMinBlue()) {
-       return new Triplet(true, leftRes.getMinBlue(), leftRes.getMinOrange());
-     }
-    return new Triplet(false, rightRes.getMinBlue(), rightRes.getMinOrange());
+     boolean isLeftMove = leftRes.getMinBlue() > rightRes.getMinBlue();
+
+    if (isLeftMove)
+      return new Triplet(isLeftMove, leftRes.getMinBlue(), leftRes.getMinOrange());
+
+    return new Triplet(isLeftMove, rightRes.getMinBlue(), rightRes.getMinOrange());
   }
 
   // Renvoie la valeur Minimax du joueur orange en fonction des valeurs Minimax de
   // ses fils.
   private static Triplet minOrange(Triplet leftRes, Triplet rightRes) {
-    if (leftRes.getMinBlue() > rightRes.getMinBlue()) {
-      return new Triplet(false, rightRes.getMinBlue(), rightRes.getMinOrange());
-    }
-    return new Triplet(true, leftRes.getMinBlue(), leftRes.getMinOrange());
+    boolean isLeftMove = leftRes.getMinBlue() < rightRes.getMinBlue();
+
+    if (isLeftMove)
+      return new Triplet(isLeftMove, leftRes.getMinBlue(), leftRes.getMinOrange());
+
+    return new Triplet(isLeftMove, rightRes.getMinBlue(), rightRes.getMinOrange());
   }
 
   // Calcule les valeurs Minimax de tout l'arbre.
   // En pratique, cette méthode calcule pour chaque noeud de l'arbre un nouveau
   // Triplet représentant les valeurs Minimax de chaque noeud.
   public void computeMinimaxValues() {
-    // TODO
+    if (isLeaf()) {
+      minimaxValue = new Triplet(false, state.getBluePoints(), state.getOrangePoints());
+    } else if (state.isBlueToPlay()) {
+      this.leftChild.computeMinimaxValues();
+      this.rightChild.computeMinimaxValues();
+
+      minimaxValue = minBlue(leftChild.getMinimaxValue(), rightChild.getMinimaxValue());
+    } else {
+      this.leftChild.computeMinimaxValues();
+      this.rightChild.computeMinimaxValues();
+
+      minimaxValue = minOrange(leftChild.getMinimaxValue(), rightChild.getMinimaxValue());
+    }
   }
 
   // Renvoie true si le noeud est une feuille, false sinon.

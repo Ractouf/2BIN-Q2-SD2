@@ -1,31 +1,38 @@
-// Cette classe représente un joueur automatique.
-// Elle maintient à jour un arbre des meilleurs coups.
+// Cette classe reprï¿½sente un joueur automatique.
+// Elle maintient ï¿½ jour un arbre des meilleurs coups.
 public class AutomaticPlayer extends SimpleSpectator implements Player {
 
-  // Nœud courant de jeu. C'est le nœud qui correspond à l'état courant du jeu.
+  // Nï¿½ud courant de jeu. C'est le nï¿½ud qui correspond ï¿½ l'ï¿½tat courant du jeu.
   private Tree currentNode;
 
-  /* En plus du contrat de Spectator, cette méthode :
+  /* En plus du contrat de Spectator, cette mï¿½thode :
    1) Initialise l'arbre du jeu, et
-   2) calcule les valeurs Minimax pour chaque nœud de l'arbre.*/
+   2) calcule les valeurs Minimax pour chaque nï¿½ud de l'arbre.*/
   @Override
   public void start(State state) {
+    currentNode = new Tree(state);
 
+    this.currentNode.computeMinimaxValues();
   }
 
-  /* En plus du contrat de Spectator, cette méthode maintient currentNode,
-   c.-à-d. le nœud qui correspond à l'état courant du jeu.*/
+  /* En plus du contrat de Spectator, cette mï¿½thode maintient currentNode,
+   c.-ï¿½-d. le nï¿½ud qui correspond ï¿½ l'ï¿½tat courant du jeu.*/
   @Override
   public void play(boolean isLeftMove, State state) {
-    // TODO
+    super.play(isLeftMove, state);
+
+    if (isLeftMove) {
+      currentNode = currentNode.getLeftChild();
+    } else {
+      currentNode = currentNode.getRightChild();
+    }
   }
 
-  /* Cette méthode est appelée pour connaitre le coup de ce joueur :
+  /* Cette mï¿½thode est appelï¿½e pour connaitre le coup de ce joueur :
    1) Elle renvoie vrai si ce joueur joue la barre de gauche, et
    2) Elle renvoie faux si ce joueur joue la barre de droite.*/
   @Override
   public boolean nextPlay() {
-    // TODO
-    return true;
+    return currentNode.getMinimaxValue().isLeftMove();
   }
 }
