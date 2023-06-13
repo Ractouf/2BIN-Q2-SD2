@@ -82,14 +82,10 @@ public class Tree implements Iterable<Tree> {
 	}
 
 	private HashMap<Integer,Integer> toMap(Tree t, HashMap<Integer, Integer> map) {
-		int oldVal = 0;
+		if (!map.containsKey(t.getValue()))
+			map.put(t.getValue(), 0);
 
-		if (map.containsKey(t.getValue())) {
-			oldVal = map.get(t.getValue());
-			map.remove(t.getValue());
-		}
-
-		map.put(t.getValue(), oldVal + 1);
+		map.put(t.getValue(), map.get(t.getValue()) + 1);
 
 		for (Tree c : t.getChildren()) {
 			toMap(c, map);

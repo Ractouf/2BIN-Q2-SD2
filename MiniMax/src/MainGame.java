@@ -3,7 +3,7 @@ import java.util.Random;
 // Cette classe joue une unique partie entre 2 joueurs. 
 public class MainGame {
 
-  // Le jeu est composé de 10 nombres allant de 1 à BOUND compris.
+  // Le jeu est composï¿½ de 10 nombres allant de 1 ï¿½ BOUND compris.
   public static final int BOUND = 5;
 
   public static void main(String[] args) {

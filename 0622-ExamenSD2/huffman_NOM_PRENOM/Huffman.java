@@ -95,7 +95,30 @@ public class Huffman {
 	// En paramètre, en plus de la chaine à décoder, est spécifié la racine de l'arbre de 
 	// Huffman 
 	public static String expand(Node root, String t) {
-		return "";
+		StringBuilder decode = new StringBuilder();
+
+		Node current = root;
+		int index = 0;
+		int nbChar = 0;
+
+		while (nbChar < root.freq) {
+			if (t.charAt(index) == '0') {
+				current = current.left;
+			} else {
+				current = current.right;
+			}
+
+			if (current.isLeaf()) {
+				decode.append(current.ch);
+				current = root;
+
+				nbChar++;
+			}
+
+			index ++;
+		}
+
+		return String.valueOf(decode);
 	}
 	
 	public static void main(String[] args) throws IOException {

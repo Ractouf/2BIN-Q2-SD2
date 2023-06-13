@@ -12,7 +12,7 @@ public class AutomaticPlayer extends SimpleSpectator implements Player {
   public void start(State state) {
     currentNode = new Tree(state);
 
-    this.currentNode.computeMinimaxValues();
+    currentNode.computeMinimaxValues();
   }
 
   /* En plus du contrat de Spectator, cette m�thode maintient currentNode,

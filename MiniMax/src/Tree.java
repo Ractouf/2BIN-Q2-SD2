@@ -30,7 +30,7 @@ public class Tree {
   // Renvoie la valeur Minimax du joueur bleu en fonction des valeurs Minimax de
   // ses fils.
   private static Triplet minBlue(Triplet leftRes, Triplet rightRes) {
-     boolean isLeftMove = leftRes.getMinBlue() > rightRes.getMinBlue();
+    boolean isLeftMove = leftRes.getMinBlue() > rightRes.getMinBlue();
 
     if (isLeftMove)
       return new Triplet(isLeftMove, leftRes.getMinBlue(), leftRes.getMinOrange());

@@ -1,4 +1,4 @@
-// La classe peut être modifiée si nécéssaire
+// La classe peut ï¿½tre modifiï¿½e si nï¿½cï¿½ssaire
 
 public class Etudiant {
 	private final int numeroRegistreNational;
@@ -55,7 +55,4 @@ public class Etudiant {
 			return false;
 		return true;
 	}
-	
-	
-
 }
