@@ -11,6 +11,7 @@ public class LocationPatins {
 	private HashMap<Integer, ArrayDeque<Integer>> pointures;
 	private HashMap<Integer, LocalTime> casiersOccupes;
 	private int[] casiersBase;
+
 	public LocationPatins(int[] casiers) {
 		pointures = new HashMap<>();
 		casiersOccupes = new HashMap<>();

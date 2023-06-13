@@ -1,3 +1,5 @@
+import java.util.ArrayDeque;
+
 public class Trees {
 	public static int nbrLeaves(Tree t) {
 		int r;
@@ -114,32 +116,101 @@ public class Trees {
 
 	// 1.6)
 	public static boolean sameOne(Tree n1, Tree n2) {
-		return false;
+		if (n1.getParent() != null)
+			return sameOne(n1.getParent(), n2);
+
+		if (n2.getParent() != null)
+			return sameOne(n1, n2.getParent());
+
+		return n1.getValue() == n2.getValue();
 	}
 
 	// 1.7)
 	public static void dfsPrint(Tree t) {
+		System.out.println("Arbre: " + t.getValue() + " de profondeur: " + depth(t));
+
+		for (Tree c : t)
+			dfsPrint(c);
 	}
 
 	// 1.8)
 	public static void bfsPrint(Tree t) {
+		ArrayDeque<Tree> deque = new ArrayDeque<>();
+		deque.add(t);
+
+		bfsPrint(deque);
+	}
+
+	private static void bfsPrint(ArrayDeque<Tree> deque) {
+		if (!deque.isEmpty()) {
+			Tree current = deque.removeFirst();
+
+			System.out.println("Arbre: " + current.getValue() + " de profondeur: " + depth(current));
+
+			for (Tree c : current) {
+				deque.add(c);
+			}
+
+			bfsPrint(deque);
+		}
 	}
 
 	// 2.1)
 	static void printPathV1(Tree node) {
+		if (node.getParent() != null) {
+			printPathV1(node.getParent());
+		}
+
+		System.out.println(node.getValue());
 	}
 
 	// 2.2)
 	static void printPathV2(Tree node) {
+		while (node != null) {
+			System.out.println(node.getValue());
+			node = node.getParent();
+		}
 	}
 
 	// 2.3
 	static void printPathV3(Tree t, int v) {
+		if (t.getValue() == v) {
+		 printPathV1(t);
+		 return;
+		}
+
+		for (Tree c : t) {
+			printPathV3(c, v);
+		}
 	}
 
 	// 3.1
 	public static int[][] toArray(Tree t) {
-		return null;
+		int[][] tab = new int[3][nbrNode(t)];
+
+		return toArray(t, tab, 0);
+	}
+
+	private static int[][] toArray(Tree t, int[][] tab, int index) {
+		tab[0][index] = t.getValue();
+
+		if (t.isLeaf()) {
+			tab[1][index] = -1;
+			tab[2][index] = -1;
+		} else if (t.getChildren().length == 1) {
+			tab[1][index] = index + 1;
+			tab[2][index] = -1;
+
+			toArray(t.getChildren()[0], tab, index + 1);
+		} else {
+			tab[1][index] = index + 1;
+			toArray(t.getChildren()[0], tab, index + 1);
+
+			tab[2][index] = index + nbrNode(t.getChildren()[0]) + 1;
+			toArray(t.getChildren()[1], tab, index + nbrNode(t.getChildren()[0]) + 1);
+		}
+
+		return tab;
 	}
 
 	// 3.2

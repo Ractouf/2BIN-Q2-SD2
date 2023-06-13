@@ -9,7 +9,7 @@ public class ListeDArc extends Graph{
 
 	public ListeDArc() {
 		super();
-		flights=new ArrayList<Flight>();
+		flights = new ArrayList<Flight>();
 	}
 
 	@Override
@@ -45,5 +45,4 @@ public class ListeDArc extends Graph{
 		}
 		return false;
 	}
-
 }

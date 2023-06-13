@@ -12,13 +12,12 @@ public class Main {
 
     Tree l1_2 = new Tree(7);
     Tree l3_2 = new Tree(3);
-    Tree l5_2 = new Tree(5);
     Tree l7_2 = new Tree(1);
 
     Tree t2_2 = new Tree(2, new Tree[]{l1_2, l3_2});
     Tree t6_2 = new Tree(6, new Tree[]{l7_2});
 
-    Tree t4_2 = new Tree(4, new Tree[]{t2_2, l5_2, t6_2});
+    Tree t4_2 = new Tree(4, new Tree[]{t2_2, t6_2});
 
     System.out.println(Trees.nbrLeaves(t4));
 
@@ -54,7 +53,32 @@ public class Main {
     System.out.println(Trees.depth(l7));
 
     System.out.println("1.6");
-    System.out.println("l7 == l7 " + Trees.sameOne(l7, t2));
-    System.out.println("l7 == l7_2 " + Trees.sameOne(l7, t2_2));
+    System.out.println("l7 == l7 " + Trees.sameOne(l7, l7));
+    System.out.println("t4 == t6_2 " + Trees.sameOne(t4, t6_2));
+
+    System.out.println("1.7");
+    Trees.dfsPrint(t4);
+
+    System.out.println("1.8");
+    Trees.bfsPrint(t4);
+
+    System.out.println("2.1");
+    Trees.printPathV1(l7);
+
+    System.out.println("2.2");
+    Trees.printPathV2(l7);
+
+    System.out.println("2.2");
+    Trees.printPathV3(t4, 7);
+
+    System.out.println("3.1");
+    int[][] tab = Trees.toArray(t4_2);
+    for (int j = 0; j < tab.length; j++) {
+      for (int k = 0; k < tab[j].length; k++) {
+        System.out.print("\t " + tab[j][k]);
+      }
+      System.out.println();
+    }
+
   }
 }

@@ -42,6 +42,6 @@ public class Deplacement {
 
   @Override
   public String toString() {
-    return "Deplacement [ligne=" + ligne.getNumero() + ", depart=" + depart + ", arrivee=" + arrivee + ", attenteMoyenne=" + ligne.getTempsMoyen() + ", duree=" + duree + ", nbTroncon=" + nbTroncons + ", type=" + ligne.getType() + ", direction=" + ligne.getDestination();
+    return "Deplacement [ligne=" + ligne.getNumero() + ", depart=" + depart + ", arrivee=" + arrivee + ", attenteMoyenne=" + ligne.getTempsMoyen() + ", duree=" + duree + ", nbTroncon=" + nbTroncons + ", type=" + ligne.getType() + ", direction=" + ligne.getDestination() + "]";
   }
 }

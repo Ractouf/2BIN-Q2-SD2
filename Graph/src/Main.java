@@ -7,6 +7,5 @@ public class Main {
 		System.out.println("----------------------");
 		System.out.println(g.sontAdjacents((g.getAirport("JFK")), (g.getAirport("STN"))));
 		System.out.println(g.sontAdjacents((g.getAirport("JFK")), (g.getAirport("BCN"))));
-
 	}
 }
