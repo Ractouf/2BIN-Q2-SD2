@@ -53,7 +53,7 @@ public class Huffman {
 
   // renvoie l'arbre de Huffman obtenu � partir de la map des fr�quences des lettres
   public static Node buildTree(Map<Character, Integer> freq) {
-    PriorityQueue<Node> queue = new PriorityQueue<>(Comparator.comparingInt(a -> a.freq));
+    PriorityQueue<Node> queue = new PriorityQueue<>(Comparator.comparing(a -> a.freq));
 
     for (Entry<Character, Integer> entry : freq.entrySet()) {
       queue.add(new Node(entry.getKey(), entry.getValue(), null, null));
@@ -81,7 +81,7 @@ public class Huffman {
 
   private static void buildCode(Node root, Map<Character, String> map, String code) {
     if (root.isLeaf()) {
-      map.put(root.ch, String.valueOf(code));
+      map.put(root.ch, code);
     } else {
       buildCode(root.left, map, code + '0');
       buildCode(root.right, map, code + '1');

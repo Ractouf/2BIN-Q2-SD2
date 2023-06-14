@@ -10,6 +10,8 @@ public class AutomaticPlayer extends SimpleSpectator implements Player {
    2) calcule les valeurs Minimax pour chaque n�ud de l'arbre.*/
   @Override
   public void start(State state) {
+    super.start(state);
+    
     currentNode = new Tree(state);
 
     currentNode.computeMinimaxValues();

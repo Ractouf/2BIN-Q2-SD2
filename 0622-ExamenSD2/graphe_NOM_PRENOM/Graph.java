@@ -69,7 +69,7 @@ public class Graph {
 
 			for (Flight flight : flights) {
 				if (flight.getSource().equals(currentAirport) && !visited.contains(flight.getDestination())) {
-					file.add(flight.getDestination());
+					file.addLast(flight.getDestination());
 					visited.add(flight.getDestination());
 				}
 			}
